@@ -1,0 +1,1366 @@
+## 1. Statistical modelling
+
+
+  In the course, the main focus is on regression modelling, a statistical modelling used to approximate relationships between variables. the fundamental data modelling is to make a relationship between:
+  
+  * a **response variable**, $Y$, and
+  
+  * one or more **predictors variables**, $\textbf{X} = \left( X_1,X_2,...,X_p \right)$
+  
+
+### 1.1 Statistical modelling settings
+
+on regression modelling, mainly consider on two different settings:
+
+  * Inference, when the aim is to explicitly describe and quantify the relationship between $Y$ and $\textbf{X}$, including determining which of the predictors have a statistically significant relationship with $Y$ and approximating the exact form of the relationship between each predictor and $Y$. model interpretability is important for inference.
+  
+  * **Prediction**, when the aim is to predict the response variable $Y$ based on information contained in a set of predictor variables $\textbf{X}$. Unlike modelling for inference, you don't care much about understanding how all the variables relate and interact with one another, but rather only whether you can make good predictions about $Y$ using the information in $\textbf{X}$
+
+## 2. Multiple Linear Regression
+
+### 2.1 Model definition
+
+Suppose we are given a variable of primary of interest, $Y$, and we aim to model the relation between $Y$ nd a set of predictors of explanatory variables, $\textbf{X} = (X_1,X_2,...,X_p)$,
+
+In general,
+
+$$
+f(x)=
+\underbrace{f(X)}_\text{systematic component}+ 
+\underbrace{\varepsilon}_\text{error}
+$$
+
+For example, it could be that
+
+$$f(X) = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + ... + \beta_p X_p$$
+
+
+\newpage
+\begin{center}
+Summary written here is from week 5 to 8 notes
+
+Lecturer: Yuichi Hirose
+\end{center}
+
+a column $n-$vector is
+
+$$
+\mathbf{a=}
+\left(\begin{array}{cc} 
+a_1\\
+a_2\\
+\vdots\\
+a_n
+\end{array}\right)
+$$ 
+
+a row $n-$vector is
+
+$$
+\mathbf{a=}
+\left(\begin{array}{cc} 
+a_1, a_2,..., a_n
+\end{array}\right)
+$$ 
+
+**Transpose of vectors**
+
+The transpose of column vector is a row vector
+
+$$
+\mathbf{a}^T=
+\left(\begin{array}{cc} 
+a_1\\
+a_2\\
+\vdots\\
+a_n
+\end{array}\right)^T
+=
+\left(\begin{array}{cc} 
+a_1, a_2,...,a_n
+\end{array}\right)
+$$
+
+On the other hand, the transpose of row vector is a column vector
+
+$$
+\mathbf{a}^T=
+\left(\begin{array}{cc} 
+a_1, a_2,..., a_n
+\end{array}\right)^T
+=
+\left(\begin{array}{cc} 
+a_1\\
+a_2\\
+\vdots\\
+a_n
+\end{array}\right)
+$$
+
+In R
+```{r}
+a<- c(1,2,3)
+a
+```
+
+The vector is a column vector
+
+```{r}
+t(a)
+```
+
+This is the transpose of vector a
+
+**Multiplying by a number**
+
+$$
+\alpha \mathbf{a}=
+\left(\begin{array}{cc} 
+\alpha a_1\\
+\alpha a_2\\
+\vdots\\
+\alpha a_n
+\end{array}\right)
+$$
+
+**Sum of vectors**
+
+$$
+\mathbf{a}+\mathbf{b}=
+\left(\begin{array}{cc} 
+a_1\\
+a_2\\
+\vdots\\
+a_n
+\end{array}\right)+
+\left(\begin{array}{cc} 
+b_1\\
+b_2\\
+\vdots\\
+b_n
+\end{array}\right)=
+\left(\begin{array}{cc} 
+a_1+b_1\\
+a_2+b_2\\
+\vdots\\
+a_n+b_n
+\end{array}\right)
+$$ 
+The dimension of both vectors must be the same
+
+
+### Inner product, sum of squares and length
+
+let
+$$
+\mathbf{a}=
+\left(\begin{array}{cc} 
+a_1\\
+a_2\\
+\vdots\\
+a_n
+\end{array}\right),
+\mathbf{b}=
+\left(\begin{array}{cc} 
+b_1\\
+b_2\\
+\vdots\\
+b_n
+\end{array}\right)
+$$ 
+The inner product of $\mathbf{a}$ and $\mathbf{b}$ is
+$$
+\mathbf{a}^T\mathbf{b}=
+\left(\begin{array}{cc} 
+a_1,a_2,...,a_n
+\end{array}\right)
+\left(\begin{array}{cc} 
+b_1\\
+b_2\\
+\vdots\\
+b_n
+\end{array}\right)=
+a_1b_1+\dots+a_nb_n=
+\sum^n_{i=1}a_ib_i
+$$ 
+
+sum of squares of components of $\mathbf{a}$ is
+$$
+\mathbf{a}^T\mathbf{a}=
+\left(\begin{array}{cc} 
+a_1,a_2,...,a_n
+\end{array}\right)
+\left(\begin{array}{cc} 
+a_1\\
+a_2\\
+\vdots\\
+a_n
+\end{array}\right)
+=a_1^2 + \dots + a_n^2 = \sum^n_{i=1} a_i^2
+$$ 
+
+The length of vector $\mathbf{a}$ is
+
+$$||\mathbf{a}||= \sqrt{\mathbf{a}^T\mathbf{a}} = \sqrt{\sum^n_{i=1}a^2_i}$$
+
+### The $0-$ vector and $1-$ vector
+
+the zero and one vector are
+
+$$
+\mathbf{0}=
+\left(\begin{array}{cc} 
+0\\
+0\\
+\vdots\\
+0
+\end{array}\right)
+,
+\mathbf{1}=
+\left(\begin{array}{cc} 
+1\\
+1\\
+\vdots\\
+1
+\end{array}\right)
+$$
+
+### The addition of constant
+
+$$
+\mathbf{a}+c\mathbf{1}=
+\left(\begin{array}{cc} 
+a_1\\
+a_2\\
+\vdots\\
+a_n
+\end{array}\right)+c
+\left(\begin{array}{cc} 
+1\\
+1\\
+\vdots\\
+1
+\end{array}\right)=
+\left(\begin{array}{cc} 
+a_1+c\\
+a_2+c\\
+\vdots\\
+a_n+c
+\end{array}\right)
+$$ 
+
+### Component of a vector
+
+It can be accessed by
+```{r,eval=FALSE}
+#Component of vector
+a = c(4,5,6)
+a[1]
+a[2]
+a[3]
+```
+
+
+## Matrices, skipped
+
+
+## Linear Regression model
+
+### 1. Simple linear regression
+
+It is a model given by
+
+$$y=\beta_0+\beta_1 x+\varepsilon$$
+
+where $y$ is the response variable and $x$ is the covariate. The model assumes the linear relationship with error $\varepsilon$. $\beta_0$ is the intercept and $\beta_1$ is the slope of the line.
+
+### 1.1 Example of simulated dataset
+
+example code
+```{r,eval=FALSE}
+#Simple linear regression
+#Simulation of data
+set.seed(123)
+x <- 1:10
+e <- rnorm(10)
+y = 5+ 2*x + e
+
+dat <- data.frame(x,y)
+dat
+plot(x,y)
+```
+
+### Matrix notation
+
+The simple linear regression equations
+
+$$y_i = \beta_0 + \beta_1 x_1 + \varepsilon_i, i=1,2,\dots,n$$
+
+can be written in matrix form as
+
+$$
+\left(\begin{array}{cc} 
+y_1\\
+y_2\\
+\vdots\\
+y_n
+\end{array}\right)=
+\left(\begin{array}{cc} 
+\beta_0+\beta_1x_1\\
+\beta_0+\beta_1x_2\\
+\vdots\\
+\beta_0+\beta_1x_n
+\end{array}\right)+
+\left(\begin{array}{cc} 
+\varepsilon_1\\
+\varepsilon_2\\
+\vdots\\
+\varepsilon_n
+\end{array}\right)=
+\left(\begin{array}{cc} 
+1 & x_1\\
+1 & x_2\\
+\vdots\\
+1 & x_n
+\end{array}\right)
+\left(\begin{array}{cc} 
+\beta_0\\
+\beta_1
+\end{array}\right)+
+\left(\begin{array}{cc} 
+\varepsilon_1\\
+\varepsilon_2\\
+\vdots\\
+\varepsilon_n
+\end{array}\right)
+$$ 
+
+The matrix
+$$
+\left(\begin{array}{cc} 
+1 & x_1\\
+1 & x_2\\
+\vdots & \vdots\\
+1 & x_n
+\end{array}\right)
+$$
+is called the design matrix and denoted by $\mathbf{X}$
+
+We also denote the parameter vector, the response variable vector and the error by
+$$
+\boldsymbol{\beta}=
+\left(\begin{array}{cc} 
+\beta_0\\
+\beta_1
+\end{array}\right),
+\mathbf{y}=
+\left(\begin{array}{cc} 
+y_1\\
+y_2\\
+\vdots\\
+y_n
+\end{array}\right)
+\textrm{ and }
+\boldsymbol\varepsilon =
+\left(\begin{array}{cc} 
+\varepsilon_1\\
+\varepsilon_2\\
+\vdots\\
+\varepsilon_n
+\end{array}\right)
+$$
+The model in the matrix form is then
+
+$$\textbf{y}=\textbf{X}\boldsymbol\beta + \boldsymbol\varepsilon$$
+
+
+### Design matrix in R
+
+The function `model.matrix` gives the design matrix of the model
+
+Example
+```{r, eval=FALSE}
+#design matrix
+X <- model.matrix(y~x, data=dat)
+```
+
+
+### 2. Least square estimator (LSE) of $\beta$
+
+We find the $\textbf{LSE}$ of $\boldsymbol{\beta}$ by minimising the SSE. the LSE of $\boldsymbol{\beta}$ is given by
+
+$$\boldsymbol{\widehat{\beta}} = \left(\boldsymbol{X}^T\boldsymbol{X}\right)^{-1}\boldsymbol{X}^T\mathbf{y}$$
+
+### 2.1 Calculation $\widehat\beta$ by `R`
+
+The function `t()` and `solve()` gives the transpose and the inverse of matrices, respectively. For a matrix $\textbf{A}$, its transpose $\textbf{A}^T$ is given by `t(A)` and its inverse $\textbf{A}^{-1}$ is given by `solve(A)`.
+
+Then the estimator of $\boldsymbol{ \widehat{\beta}} = \left( \boldsymbol{X}^T \boldsymbol{X} \right)^{-1} \boldsymbol{X}^T \mathbf{y}$ is calculate by the following code
+
+```{r, eval=FALSE}
+beta_hat <- solve(t(X)%*%X) %*% t(X) %*% y
+beta_hat
+```
+
+or
+
+```{r, eval=FALSE}
+mod <- lm(y~x)
+mod$coeff
+```
+
+
+### 3. Predicted values, residuals and SSR
+
+### 3.1 Predicted values
+
+The **predicted values** of $y_1,...,y_n$ are defined by
+
+$$\hat{y}_i = \widehat{\beta}_0+\widehat{\beta}_1x_i, i=1,2,...,n$$,
+
+where
+
+$$
+\boldsymbol{\widehat\beta}=
+\left(\begin{array}{cc} 
+\beta_0\\
+\beta_1
+\end{array}\right)
+$$
+
+is the $\textbf{LSE}$ of $\boldsymbol{\beta}$.
+
+In the matrix form these equations are
+
+$$
+\left(\begin{array}{cc} 
+\widehat y_1\\
+\widehat y_2\\
+\vdots\\
+\widehat y_n
+\end{array}\right)=
+\left(\begin{array}{cc} 
+\widehat\beta_0+\widehat\beta_1x_1\\
+\widehat\beta_0+\widehat\beta_1x_2\\
+\vdots\\
+\widehat\beta_0+\widehat\beta_1x_n
+\end{array}\right)
+=
+\left(\begin{array}{cc} 
+1 & x_1\\
+1 & x_2\\
+\vdots & \vdots\\
+1 & x_n
+\end{array}\right)
+\left(\begin{array}{cc} 
+\widehat\beta_0\\
+\widehat\beta_1
+\end{array}\right)
+$$
+
+In matrix notation the predicted values of $\widehat{y}$ is given by
+
+$$\widehat{y}=\textbf{X}\boldsymbol{\widehat\beta}$$
+
+where $\boldsymbol{X}$ is the design matrix of the simple linear regression model.
+
+### 3.2 Calculation of predicted values $\hat{y}$ by R
+
+```{r,eval=FALSE}
+y_hat = X %*% beta_hat
+y_hat
+```
+
+Another way is
+
+```{r,eval=FALSE}
+y_hat <- predict(mod, data=dat)
+y_hat
+```
+
+
+### 3.3 Residuals
+
+The residuals $e_1,e_2,...,e_n$ are defined by
+
+$$e_i=y_i-\hat{y}_i=y_i-\hat\beta_0-\hat\beta_1 x_i, i=1,2,...,n$$
+
+in matrix form
+
+$$
+\left(\begin{array}{cc} 
+e_1\\
+e_2\\
+\vdots\\
+e_n
+\end{array}\right)=
+\left(\begin{array}{cc} 
+y_1-\widehat{y}_1\\
+y_2-\widehat{y}_2\\
+\vdots\\
+y_n-\widehat{y}_n
+\end{array}\right)=
+\left(\begin{array}{cc} 
+y_1-\widehat\beta_0-\widehat\beta_1x_1\\
+y_2-\widehat\beta_0-\widehat\beta_1x_2\\
+\vdots\\
+y_n-\widehat\beta_0-\widehat\beta_1x_n
+\end{array}\right)=
+\textbf{y}-\textbf{X}\boldsymbol{\hat\beta}
+$$
+
+The residual vector is then
+
+$$\textbf{e}=\textbf{y}-\widehat{\textbf{y}}=\textbf{y}-\textbf{X}\boldsymbol{\hat\beta}$$
+
+### 3.4 Sum of Squared Errors
+
+The **sum of squared error** is defined by
+
+$$SSE=\sum^n_{i=1} e^2_i = \sum^n_{i=1} \left(y_1 - \widehat\beta_0 - \widehat\beta_1 x_i \right)^2$$
+
+For a vector
+
+$$
+\mathbf{a}=
+\left(\begin{array}{cc} 
+a_1\\
+a_2\\
+\vdots\\
+a_n
+\end{array}\right),
+$$ 
+
+The inner product with itself
+
+$$
+\mathbf{a}^T\mathbf{a}=
+\left(\begin{array}{cc} 
+a_1,a_2,...,a_n
+\end{array}\right)
+\left(\begin{array}{cc} 
+a_1\\
+a_2\\
+\vdots\\
+a_n
+\end{array}\right)
+=a_1^2 + \dots + a_n^2 = \sum^n_{i=1} a_n^2
+$$ 
+
+
+Apply this equation to the vector
+
+$$
+\textbf{e}=
+\textbf{y}-\textbf{X}\boldsymbol{\hat\beta}=
+\left(\begin{array}{cc} 
+y_1-\widehat\beta_0-\widehat\beta_1x_1\\
+y_2-\widehat\beta_0-\widehat\beta_1x_2\\
+\vdots\\
+y_n-\widehat\beta_0-\widehat\beta_1x_n
+\end{array}\right)
+$$
+
+we get the expression
+
+$$\left(\textbf{y}-\textbf{X}\boldsymbol{\hat\beta}\right)^T \left( \textbf{y}-\textbf{X}\boldsymbol{\hat\beta}\right) = \sum^n_{i=1} \left(y_1 - \widehat\beta_0 - \widehat\beta_1 x_i \right)^2$$
+
+The sum of squared residuals in the matrix form
+
+$$SSE=\left(\textbf{y}-\textbf{X}\boldsymbol{\hat\beta}\right)^T \left( \textbf{y} - \textbf{X}\boldsymbol{\hat\beta}\right) = \left( \textbf{y}-\widehat{\textbf{y}} \right)^T \left( \textbf{y} - \widehat{\textbf{y}} \right)$$
+
+
+## 1 SE Rule
+
+In tutorial 7, he talks about the difference between the "normal" best lambda and other lambda using `1se` rule.
+
+The `1SE` rule is for choosing an optimal tree size, and they implement it throughout the book. In order to calculate the standard error for single V-fold cross- validation, accuracy needs to be calculated for each fold, and the standard error is calculated from V accuracies from each fold. The 1 SE rule is defined as selecting the most parsimonious model whose error is no more than one standard error above the error of the best model, and they suggest in several places using the 1 SE rule for general cross-validation use. The main point of the 1 SE rule, with which we agree, is to choose the simplest model whose accuracy is comparable with the best model.
+
+###  See Tutorial 7 for more understanding
+
+## grid
+
+Using custom grid is to expand the range. so the code shown below is a grid made up of 100 pints from $10^{10}$ to $10^{-2}$. This is to cover the full range from null model (only the intercept) to full model. if we have calculated the min of mean.cv.errors, we don't have to use the custom grid.
+
+```{r,eval=FALSE}
+grid <- 10^seq(10,-2,length=100)
+```
+
+and then apply the grid to the `cv.glmnet()` 10 fold cross validation
+
+```{r,eval=FALSE}
+cv.out=cv.glmnet(x,y,alpha=0, lambda=grid)
+# Create plot of the test MSE vs log(lambda)
+plot(cv.out)
+```
+
+where alpha 0 is for Ridge regression and alpha 1 is for LASSO regression
+
+
+
+###  See Tutorial 7 for more understanding
+
+
+### Ridge Regression
+
+```{r,eval=FALSE}
+#Regularization paths
+plot(ridge.mod, xvar="lambda", labels = TRUE)
+predict(ridge.mod, s=0, type="coefficients")
+```
+
+The cost function of the ridge regression is
+
+$$Cost = SSE + \textrm{ridge penalty} = sum \left(\left( \textbf{y} - \textbf{X}\boldsymbol{\beta}\right)^2 \right) + \lambda \cdot \textrm{sum} \left(\beta^2 \right)$$
+
+The ridge regression eatimator is then
+
+$$\boldsymbol{\widehat{\beta_{\lambda}}} = \left(\boldsymbol{X}^T\boldsymbol{X} + \lambda \textbf{I}\right)^{-1}\boldsymbol{X}^T\mathbf{y}$$
+Where the estimator depends on the value of $\lambda$. The predicted value is then computed by the formula
+
+$$\widehat{\textbf{y}}=\textbf{X}\boldsymbol{\widehat\beta_{\lambda}}$$
+and the MSE is given by the formula
+
+$$\textrm{MSE}=\frac{1}{n} \sum^n_{i=1} \left(y_i - \widehat{y_i} \right)^2$$
+
+
+## Week 6
+### Resampling methods
+### Cross validation
+### K-fold
+### LOOCV
+
+
+## Week 7
+### Poisson Regression and shrinkage methods
+
+## Week 8
+### Ridge regression and estimation of test MSE
+### Test Set Approach
+### cross validation
+
+### 1.1 Centering and scaling
+
+Suppose the data set is
+$$(y_i,x_i), i=1,2,...,n$$
+where $\textbf{x}_i=(x_{i1},...,x_{ip})$ is a vector of $p$ covariates. ($x_{ij}$ denotes $j$th covariate for subject $i$).
+
+For the ridge regression, we do centering and scaling the data set: for each $i=1,2,...,n$,
+
+$$\tilde{y_i}=y_i - mean\left(y\right)\textrm{ }\textrm{ }\left(\textrm{centering}\right)$$
+$$\tilde{y_i}=\frac{x_{ij} - mean\left(j\textrm{th covariate}\right)}{sd\left(j\textrm{th covariate}\right)}\textrm{ }\textrm{ }\textrm{ }\left(\textrm{centering and scaling}\right)$$
+
+where $mean\left(j\textrm{th covariate}\right)$ and $sd\left(j\textrm{th covariate}\right)$ are the mean and sd of the $j$th covariate vector
+
+$$j\textrm{th covariate}=\left(x_{1j},x_{2j},...,x_{nj} \right)$$
+
+It is necessary to scale it first then apply ridge regression.
+
+```{r,eval=FALSE}
+# 2. Preprocessing data set
+
+X=model.matrix(Balance~.,Credit) 
+head(X)
+
+X=model.matrix(Balance~.,Credit)[,c(-1,-2)] 
+head(X)
+dim(X)
+
+# Create the responce variable vector 'y'
+y=Credit$Balance
+length(y)
+
+# Centering y and standardizing X
+y <- scale(y, scale=FALSE)
+X <- scale(X)
+mean(y)
+apply(X,2, mean)
+apply(X,2, sd)
+
+##Beta_hat
+lambda <- 10
+p <- ncol(X)
+beta_hat_lambda <- solve(t(X)%*%X + lambda*diag(p))%*% t(X)%*%y
+beta_hat_lambda
+
+##Prediction 
+y_hat_lambda = X %*% beta_hat_lambda
+
+##MSE
+MSE <- mean((y-y_hat_lambda)^2)
+MSE
+
+
+## Regularization path
+grid=10^seq(-2,10,length=100) # Grid: 100 pints from 10^10 to 10^{-2}
+grid
+
+p <- ncol(X)
+
+beta_hat <- matrix(0, p, 100)
+i=1
+for (lambda in grid){
+  beta_hat[,i] <- solve(t(X)%*%X + lambda*diag(p))%*% t(X)%*%y
+  i <- i+1
+}
+
+dat <- t(beta_hat) # make data
+matplot(dat, type = c("l"), pch=1,col = 1:10, 
+        ylab="beta_hat" ,xlab = "lambda: from 0.01 to 10^10",
+        main = "Regularization paths") #plot
+
+```
+
+
+
+\newpage
+\begin{center}
+Summary written here is from week 9 to 12 notes
+
+Lecturer: Ryan Admiraal
+\end{center}
+
+
+## Week 9
+### Logistic Regression vs. Linear regression, Assumptions
+### Wald tests, model effects, logit models
+### logit models inference vs prediction vs EDA
+
+
+## Week 10
+### ML Regression vs. Linear regression,Wald tests, model effects and model comparison tests
+### model comparison tests and Hosmer-Lemeshow test
+### Stepwise Algorithm, Best subset selection and GAMs
+
+
+
+The function $log(\frac{p}{1-p})$ is called logit function
+
+The resulting logistic regression model is as shown
+
+$$log \left( \frac{\mathbb{E}\left( Y|X \right)}{1-\mathbb{E}\left( Y|X \right)} \right) = log \left( \frac{p}{1-p} \right)$$
+
+
+$$=\beta_0 + \beta_1 X_1 + \beta_2 X_2 + ... + \beta_k X_k$$
+
+### 1.2.1 Estimating model coefficients (Page 5 of Notes)
+
+The estimators $\widehat\beta_0$, $\widehat\beta_1$, ..., $\widehat\beta_k$ of the coefficients $\beta_0$, $\beta_1$, ..., $\beta_k$ can minimise the $RSS$
+
+$$RSS = \sum^n_{i=1} \left(Y_1 - \widehat{Y_1} \right)^2$$
+$$= \sum^n_{i=1} \left( Y_1 - \left( \widehat\beta_0 + \widehat\beta_1 X_{1i} + \widehat\beta_2 X_{2i} +... + \widehat\beta_k X_{ki} \right) \right)$$
+
+Assumptions for logistic regression:
+
+just as linear rigression has a series of underlying assumputions, logistic regression also has a set of assumptions, these relate to:
+
+  1. Distribution: $Y|X \sim Bin(n,p) \textrm{ or } Y|X \sim Ber(p)$
+  
+  2. Linearity:
+
+$$log \left( \frac{p}{1-p} \right) = \beta_0 + \beta_1 X_1 + \beta_1 X_1 + ... + \beta_k X_k$$
+  This only relevant for numerical, not categorical.
+  
+  3. Independence: The respondents $Y_1, Y_2,...,Y_n$ are independent.
+  
+  4. Multicollinearity: Predictors should not be strongly correlated. If there is multicollinearity between predictors, then the statistical significance of one or both of the correlated predictors may be understated when the model includes all of the predictors, removing one or more of the correlated predictors can reduce the standard errors of estimated coefficients for other predictors.
+
+
+### 1.3.2.1 Wald tests for model effects (page 10 of notes onwards)
+
+  * Using the hypotheses:
+
+$$\mathcal{H}_0: \beta_i = 0$$
+$$\mathcal{H}_1: \beta_i \neq 0$$
+
+  * Test statistic:
+
+$$Z = \frac{\widehat{\beta_i}}{SE \left( \widehat{\beta_i} \right)}$$
+
+  * `p`-value:
+
+$$p-value = 2 \times P \left( Z>|z| \right)$$
+
+(The p-value can be taken from the summary output)
+
+Where $Z \sim N \left( 0,1 \right)$
+
+***
+
+confidence interval for coefficients:
+
+$$\widehat{\beta_i} \pm Z_{1 - \frac{\alpha}{2}} SE \left( \widehat\beta_i \right)$$
+
+There are three types of confidence intervals in this case
+
+
+\newpage
+
+Interpreting the "effects' of $X$ (numerical) on $Y$
+
+One unit increase in the value of the predictor is associated with a multiplicative change of $\theta = exp(\beta_1)$ in the odds of "success"
+
+***
+Interpreting the "effects" of $X$ (categorical) on $Y$
+
+$$log \left( \frac{p_1}{1-p_1} \right) = \beta_0 + \beta_1 \times 0 + \beta_2 \times 0 + ... + \beta_{k-1} \times 0$$
+$$=\beta_0$$
+\hfill (reference level)
+
+$$log \left( \frac{p_2}{1-p_2} \right) = \beta_0 + \beta_1 \times 1 + \beta_2 \times 0 + ... + \beta_{k-1} \times 0$$
+$$=\beta_0 + \beta_1$$
+\hfill ($2^{nd}$ level)
+
+$$log \left( \frac{p_3}{1-p_3} \right) = \beta_0 + \beta_1 \times 0 + \beta_2 \times 1 + ... + \beta_{k-1} \times 0$$
+$$=\beta_0 + \beta_2$$
+\hfill ($3^{rd}$ level)
+
+$$log \left( \frac{p_k}{1-p_k} \right) = \beta_0 + \beta_1 \times 0 + \beta_2 \times 0 + ... + \beta_{k-1} \times 1$$
+$$=\beta_0 + \beta_{k-1}$$
+\hfill ($k^{th}$ level)
+
+
+Then, from $2^{nd}$ level onwards, exponential it.
+
+$$\left( \beta_0 + \beta_1 \right) - \beta_0 = \beta_1 \Longrightarrow exp \left( \beta_1 \right)$$
+$$\left( \beta_0 + \beta_2 \right) - \beta_0 = \beta_2 \Longrightarrow exp \left( \beta_2 \right)$$
+$$\left( \beta_0 + \beta_{k-1} \right) - \beta_0 = \beta_{k-1} \Longrightarrow exp \left( \beta_{k-1} \right)$$
+
+The odds of success for level "$i$" is exp $\left( \beta_{k-1} \right)$ times the odds of success for the reference level.
+
+***
+
+Properties
+
+  * Linear regression: "Effects" are additive
+  
+    one increase in $X$ is associated with additive change of $\beta_i$ in $Y$
+    
+  * logistic regression: "Effects" are multiplicative
+  
+    one increase in $X$ is associated with multiplicative change of exp$\left( \beta_i \right)$ in $Y$
+
+\newpage
+
+Multicollinearity
+
+  * Can be assessed using a variance inflation factor ($VIF$)
+  
+  * If it is below 10, alleviating any concerns related to collinearity of predictors
+
+
+
+### 1.3.5 Model comparison (Page 35 of notes)
+
+  * Logistic regression uses a likelihood ratio test which compares specific outcome under estimated logistic regression model for the full and reduced model.
+  
+  * Likelihood ratio test statistic can be shown from the deviance for voth the ful and reduced model.
+  
+  * The deviance is gien by:
+
+$$G^2 \left( M \right) = Deviance = \sum^n_{i=1} \left( e^D_i \right)^2$$
+
+Where $e^D_1,e^D_2,...,e^D_n$ denote the deviance residuals
+
+For nested model, let $M_1$ be the full model and $M_0$ be the reduced model. Then the ratio statistic $G^2 \left( M_0 \right) - G^2 \left( M_1 \right)$
+
+Then the hypotheses testing will be
+
+$$\mathcal{H}_0:\beta_0 + \beta_1 X_1$$
+\hfill (reduced model)
+$$\mathcal{H}_1: \beta_i + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 + ...$$
+\hfill (full model)
+
+Under the Chi-squared distribution
+
+$$\chi^2_{M_1-M_0} \textrm{ }\textrm{ }\textrm{ }\textrm{ }(\textrm{Under } \mathcal{H}_0)$$
+
+and the `p`-value follows
+
+$$p-value \approx p\left(\chi^2_{M_1-M_0} > ... \right)$$
+\newpage
+
+### 1.3.6 assessing fit (page 35 of notes)
+
+When assessing model fit, we can think of this in two ways:
+
+  1. Is the model significantly better in predicting the response than a completely non-informative model? In other words, does the model that was fit outperform the null model
+$$log \left(\frac{p}{1-p} \right)=\beta_0$$
+  a model with no predictors.
+
+  * This can be tested formally using a likelihood ratio test where the full model is the logistic
+  regression model that was fit and the reduced model is given by the null model
+    * Note that R produces the deviance (as well as residual degrees of freedom) for the null model
+    in summary output for logistic regression models and reports this as the “null deviance”.
+  
+  2. Is there a significantly better model than the one that was fit? In other words, could inclusion of additional
+  predictors (including variables that may not be measured), transformations (including
+  polynomial expansions), or interactions lead to better predictions?
+
+This latter means of assessing model fit can be accomplished using a goodness-of-fit test. When response data can be represented in a one-way or multi-way table (as is the case when predictors are categorical or numeric but with a sufficiently large number of repeated observations for the unique values of the predictor), a standard (Pearson) chi-square goodness-of-fit test can be carried out if the conditions of the test are met (particularly the condition that expected frequencies are 5 or larger for all cells of the table). When there are few repeated values for unique combinations of the predictors, then the conditions for a chi-square goodness-of-fit test are not met, and another approach may be taken. The most commonly taken approach is that proposed by Hosmer and Lemeshow.
+
+\newpage
+
+### 1.3.6.1 Hosmer-Lemeshow test (Page 35 of notes)
+
+  When data can be represented in a multi-way table but the expected frequencies for cells of the table are not all 5, rows or columns of the table can be collapsed until that condition is met so as to perform a Pearson chi-square goodness-of-fit test. When dealing with numeric predictors, there are potentially many ways in which values can be collapsed, and these may lead to different results for the goodness-of-fit test.
+  The Hosmer-Lemeshow test essentially bins or groups observations based on their predicted probabilities in one of two ways:
+
+1. Based on percentiles
+    * Suppose that it is decided to group observations into 10 bins (so as to ensure sufficiently large number of observations in each bin). Then each bin will contain approximately 10% of the observations with the first bin containing those observations with the lowest 10% of predicted probabilities and the last bin containing those observations with the highest 10% of predicted probabilities. Sample sizes in each bin will necessarily be roughly the same.
+
+2. Based on fixed values of probabilities.
+    * Suppose that it is decided to group observations into 10 bins. Then cutpoints will be set at $0, 0.1, 0.2, . . . , 1$, and observations corresponding to predicted probabilities falling between cutpoints are grouped together in the same bin. Using this method of assigning observations to bins, the number of observations assigned to bins can vary greatly.
+
+### (codes on how to do it on page 36)
+
+### 1.3.7 Exploratory Data Analysis and Model Selection (page 37)
+
+  As when we considered linear regression, there are various approaches to model selection when considering logistic regression, and these include methods discussed for linear regression. As previously noted, these methods are most appropriate for exploratory data analysis. This means that model selection can be helpful in identifying models and predictors that may be important to focus on for future studies, but it is generally inadvisable to perform inference on the resulting model identified as “best” based on model selection criteria for the data that were used to select that particular model ($i.e.$, model inference should only be carried out for data collected in the future).
+
+### 1.3.7.1 Stepwise Selection (page 37 onwards)
+
+  Stepwise algorithms for model selection (forward, backward, stepwise) follow the same general procedure as for linear regression. The key difference is that decisions for inclusion (or exclusion) are based on likelihood ratio tests comparing the existing model with a model that includes (or excludes) a particular predictor. For instance, if considering forward selection, the existing model would be compared with a series of models that include one additional predictor. The predictor that produces the likelihood ratio test with the smallest (statistically significant) p-value is added to the model. At the same time, if considering backward selection, the existing model would be compared with a series of models that exclude one predictor in the existing model. The predictor that produces the likelihood ratio test with the highest (but non-statistically significant) `p`-value is removed from the model. Stepwise selection alternates between forward selection and backward selection steps.
+
+\newpage
+
+### 1.3.7.2 AIC, BIC, $R^2$-type measures (page 40 onwards)
+
+  As we saw with linear regression, stepwise selection is generally inadvisable due to the fact that forward, backward, and stepwise selection need not arrive at the same final models. Moreover, even if they do select the same final model, it is not guaranteed that this is in fact the best model, as stepwise algorithms do not explore all possible subsets of the predictors. That being said, when considering a large number of predictors k, the computational burden associated with exploring all possible subsets of the predictors may be such that it simply is not feasible to fit logistic regression models for all possible subset of predictors. In such a case, the researcher may opt for stepwise selection algorithms due strictly to their computational efficiency, after which it may then make sense to consider models based on all possible subsets of predictors identified as most important using stepwise selection algorithms.
+
+  In general, if the number of predictors under consideration is not too large, it is preferable to consider approaches that explore all possible subsets of predictors and use criteria such as the Akaike information criterion (AIC) and Bayesian information criterion (BIC). It is also possible to produce estimates of measures analogous to R2 for a given logistic regression model, although, as before, AIC and BIC are generally preferred to R2-type measures with models producing lower values of AIC or BIC considered to be best.
+
+### 1.3.8 Polynomial Terms for Non-linearity an Interactions (page 42)
+
+  Although not as easily diagnosed by using scatterplots or other visual means for logistic regression models, trends may be non-linear in terms of one or more numeric predictors, and there may be interactions between predictors. It is possible to allow for non-linearity by including polynomial terms for numeric predictors, and model selection approaches can be used as a means of gauging the importance of these terms. In general, it is inadvisable to include a quadratic, cubic, or quartic term but not the linear term for a given model. Centering numeric predictors on 0 (by subtracting the mean value for that predictor) better helps to ensure that linear terms will always be included before higher order polynomial terms. Performing this centering on 0 and using stepwise selection algorithms (both forward and backward) applied to our “best” model according to AIC as well as up to cubic terms for all numeric predictors, we find that the extra complexity introduced by adding in non-linear terms is not warranted, as demonstrated in the tables in page 42 onwards where the final model does not include any quadratic or cubic terms.
+
+### 1.3.9 Generalised Additive Models (Page 46)
+
+  Generalised additive models (GAMs) can be applied to logistic regression models in a similar manner to linear models. Although the smooth basis functions can assume a variety of forms (including polynomials), we consider basis functions that are smoothing splines. For illustrative purposes, consider predictors included in the best model identified by stepwise selection algorithms (including interactions)
+
+  Summary output for the fit of a logistic regression of presence of infarcts in MRI on these predictors is as shown in page 46 onward.
+
+\newpage
+
+## 2 Statistical Learning for Binary Responses
+
+### 2.1 Measuring Prediction Error (page 49)
+
+Recall prediction in the context of linear regression. There, we compared the observed values $Y_1, Y_2,...,Y_n$ of the response to the predicted or fitted values $\widehat{Y_1},\widehat{Y_2},...,\widehat{Y_n}$ for a test (or hold out) set to see how well a model performed in predicting the response. The test mean squared error (MSE), given by
+
+$$MSE=\frac{1}{n} \sum^n_{i=1} \left( Y_i - \widehat{Y_i} \right)^2$$
+provided a measure of prediction error with models producing lower test MSE corresponding to better models for predictive purposes.
+
+For logistic regression, we can again use test MSE as a mean of assessing model predictive performance. A key difference, however, is that $Y_1,Y_2,...,Y_n$ are binary ($i.e.$, 0 or 1), and predictions $\widehat{Y_1},\widehat{Y_2},...,\widehat{Y_n}$ must also be binary. This means that$\left( Y_i - \widehat{Y_i} \right)^2$ is 0 if $\widehat{Y_i} = Y_i$ or 1 if $\widehat{Y_i} \neq Y_i$, so
+
+$$MSE=\frac{1}{n} \sum^n_{i=1} \left( Y_i - \widehat{Y_i} \right)^2$$
+$$=\frac{1}{n} \sum^n_{i=1} I\left( Y_i \neq \widehat{Y_i} \right)^2$$
+
+### 2.2 Classification (page 49)
+
+The test error rate requires that we calculate the fitted values for $Y$, but the fitted values for logistic regression models are in terms of not the response $Y$ but rather the probability of "success", $p$. How can we move from $\hat{p}$ to $\widehat{Y}$? Further, given that $Y$ is a discrete bbinary outcome ($i.e.$, 0 or 1), how can we ensure that predictions are also binary?
+
+Recall that a logistic regression expressed in terms of the log-odds of "success"
+
+$$log \left( \frac{\mathbb{E}\left( Y|X \right)}{1-\mathbb{E}\left( Y|X \right)} \right) = log \left( \frac{p}{1-p} \right)$$
+
+$$=\beta_0 + \beta_1 X_1 + \beta_2 X_2 + ... + \beta_k X_k$$
+for predictors $X = (X_1,X_2,X_3,...,X_k$ can be algebraically rearranged to produce a model expressed in term of the probability of "success" as
+
+$$p=\frac{\textrm{exp}\left(\beta_0 + \beta_1 X_1 + \beta_2 X_2 + ... + \beta_k X_k \right)}{1 - \textrm{exp}\left(\beta_0 + \beta_1 X_1 + \beta_2 X_2 + ... + \beta_k X_k \right)}$$
+
+For any values $\mathbb{X} = (X_1,X_2,X_3,...,X_k$ of the predictors and estimators $\widehat{\beta_0},\widehat{\beta_1},...,\widehat{\beta_k}$ of the coefficients $\beta_0,\beta_1,...,\beta_k$, we then have
+
+$$\hat{p} \left( Y=1|X\right) = \hat{p} = \frac{\textrm{exp}\left(\widehat\beta_0 + \widehat\beta_1 X_1 + \widehat\beta_2 X_2 + ... + \widehat\beta_k X_k \right)}{1 - \textrm{exp}\left(\widehat\beta_0 + \widehat\beta_1 X_1 + \widehat\beta_2 X_2 + ... + \widehat\beta_k X_k \right)}$$
+
+$$\hat{p} \left( Y=0|X\right)=1-\widehat{p}$$
+
+Where $\hat{p} \left( Y=i|X\right)$ is used to denote the estimated or fitted probability that $Y$ takes on value $i$, $i=0,1$.
+
+\newpage
+
+### 2.2.1 Bayes Classifier
+
+The simplest means of producing predicted values $\widehat{Y_1},\widehat{Y_2},...,\widehat{Y_n}$ from the predicted probabilities $\hat{p} \left( Y_1=i|X\right)$,$\hat{p} \left( Y_2=i|X\right)$,...,$\hat{p} \left( Y_n=i|X\right)$ for $i=$ 0,1, is through the **Bayes Classifier**. The Bayes classifier minimises the test error rate and uses the following simple rule:
+
+Assign to $\widehat{y}$ the level (or class) $i$ for which $\widehat{p}\left( Y=i|X\right)$ is the highest.
+
+The Bayes classifier can be used for any multinary outcome, but, in the case of a binary response and in the context of logistic regression, it produces classifications as follows:
+
+
+Value of $\widehat{p}=\widehat{P}\left( Y=1|X \right)$ is based on the classification
+
+  * if $\widehat{p} > 0.5$, then the classification $\widehat{Y}$ is $1$
+
+  * if $\widehat{p} \le 0.5$, then the classification $\widehat{Y}$ is $0$
+
+The cut point of $\widehat{p} = 0.5$ is called the **Decision boundary**, and can be set at any value in the interval [0,1]. The classification to which the decision boundary corresponds is arbitrary, so it could just as well correspond to a classification of $\widehat{Y} = 1$ rather than $\widehat{Y} = 0$ as specified on the table.
+
+From the fitted values in the estimated regression equation, Bayes can produce fitted values for the log odds for the test data, and fitted values for the probability of "success" can be obtained via
+
+$$\hat{p} = \frac{\textrm{exp}\left(log \left( \frac{\widehat{p}}{1- \widehat{p}}\right) \right)}{1 - \textrm{exp}\left( log \left( \frac{\widehat{p}}{1- \widehat{p}}\right) \right)}$$
+
+**Example on page 50 till 53**
+
+### 2.2.2 Confusion matrices, sensitivity and specificity
+
+**page 53 to 56**
+
+To illustrate confusion matrices, we will use the cardiovascular disease and cerebrovascular disease data set. The confusion matrix codes corresponding to predictions for the test data using the multiple logistic regression model is as shown below.
+
+**Example: Presence of infarcts in MRI scans**
+```{r, eval=FALSE}
+# Make classifications using 0.5 as the decision boundary.
+classifications <- as.numeric(p.hat > 0.5)
+# Construct a confusion matrix based on the classifications and observed values # of the response.
+table(classifications, test$INFARCTS)
+```
+### 2.3 The Receiver Operating Characteristic Curve
+
+**page 56 to 58**
+
+### 2.4 Best subset selection
+
+When considering statistical learning, the goal is to find the best set of predictors for predicting the response. This means that we need to specify:
+
+  * The candidate models,
+
+  * The criterion by which we determine the “best” model for prediction, and
+
+  * The means by which we assess the candidate models according to the specified criterion.
+
+  In general, we would prefer that the candidate models explore as many models as possible but also recognise practical constraints that may make certain predictors problematic for inclusion in the candidate models. For instance, if a particular predictor is very expensive or time consuming to measure, is subject to high levels of missingness ($e.g.$, income data), or is difficult to measure with any degree of precision, then we may opt not to include that particular predictor in candidate models. At the same time, if there is strong multicollinearity between predictors, we may opt to exclude one or more of those predictors.
+  The criterion used to select the “best” model should be informed by the problem that motivated the search for a predictive model in the first place. Although there is typically a fair level of agreement between test error rate and AUC in terms of best models, these are not guaranteed to settle on the same “best” model. Most algorithms for selecting the “best” model from the candidate models strictly use the test error rate, and, if there is no difference in terms of the cost of a false positive or a false negative, then it would be reasonable to minimise the test error rate. However, this is not guaranteed to maximise AUC, and, if false positives and false negatives have different associated costs, then it may make sense to focus on maximising AUC.
+  Finally, it is important that the data used to fit the candidate models and the data used to assess their predictive performance differ, so a validation approach would be important. As was the case when considering linear regression models, we generally use 5-fold or 10-fold cross-validation as a means of separating the dataset into training and test data and providing a measure of predictive performance over the entire dataset.
+
+**Example is on page 59 to 64**
+
+To determine the “best” model in the example provided, we examine both the test error rate and AUC, although in practice we are probably more interested in maximizing AUC for this application. Examining both highlights how the two criteria need not arrive at the same “best” model. Finally, we use 10-fold cross-validation to assess the predictive performance for each model, and we will carry out 20 repetitions of this to produce a measurement of variability in test error rate and AUC for each of the models.
+Boxplots of the test error rate and AUC for the various candidate models for 20 repetitions of 10-fold cross-validation are as shown in example output in page 63 of the notes.
+
+**The codes provided below is the same as the one from the notes, by using the MRI scan example in page 60 of Ryan's course notes**
+```{r, eval=FALSE}
+# Load the "boot" package to make use of the cv.glm() function for k-fold cross-validation of GLMs.
+library(boot)
+# Load the "doParallel" package to allow for parallel processing.
+library(doParallel)
+# Load the "foreach" package to allow for splitting loops.
+library(foreach)
+
+# Convert MALE and STROKE to factors
+reduced.infarcts$MALE <- factor(reduced.infarcts$MALE)
+#reduced.infarcts$RACE <- factor(reduced.infarcts$RACE)
+#reduced.infarcts$EDUC <- factor(reduced.infarcts$EDUC)
+reduced.infarcts$STROKE <- factor(reduced.infarcts$STROKE)
+
+#######################################
+## Define functions for the costs    ##
+## corresponding to the error rate   ##
+## and the area under the ROC curve. ##
+#######################################
+
+total.error.rate <- function(r, p)
+{
+    mean(r != as.numeric(p > 0.5))
+}
+
+area.under.curve <- function(r, p = 0)
+{
+    require(ROCR)
+
+    pred <- prediction(p, r)
+    auc <- performance(pred, measure = "auc")
+    auc@y.values[[1]]
+}
+
+########################################
+## Perform an exhaustive model search ##
+## for all possible subsets of the    ##
+## variables specified.               ##
+########################################
+
+# Specify the indices of the variables to be considered in predictive models for presence of infarcts.
+variable.indices <- c(2, 3, 7, 8, 9, 11, 12, 15, 24)
+
+# Produce a matrix that represents all possible combinations of variables.
+# Remove the first row, which is the null model.
+all.comb <- expand.grid(as.data.frame(matrix(rep(0 : 1, length(variable.indices)),
+                                             nrow = 2)))[-1, ]
+
+# Specify the number of repetitions of ten-fold cross-validation to carry out for
+# a series of logistic regression models.
+nrep <- 20
+
+# Fire up 75% of cores for parallel processing.
+nclust <- makeCluster(detectCores() * 0.75)
+registerDoParallel(nclust)
+
+# Set random number generator seed for replicability of results.
+set.seed(1)
+
+# View CPU run time for processes up until this point.
+before <- proc.time()
+
+######################
+## Total error rate ##
+######################
+
+# Use "foreach" to tap into parallel computing to calculate the total error rate using
+# logistic regression and ten-fold cross-validation.
+error.rate.parallel <- foreach(i = 1 : nrep, .combine = "rbind", .packages = "boot") %:%
+    foreach(j = 1 : nrow(all.comb), .combine = "c") %dopar%
+    {
+        logistic.regression.model <-
+          glm(as.formula(paste("INFARCTS ~",
+                               paste(names(reduced.infarcts)[variable.indices[all.comb[j,] == 1]],
+                                     collapse = " + "))),
+              data = reduced.infarcts, family = "binomial")
+        return(cv.glm(reduced.infarcts, logistic.regression.model,
+                      cost = total.error.rate, K = 10)$delta[1])
+    }
+
+##############################
+## Area under the ROC curve ##
+##############################
+
+AUC.parallel <- foreach(i = 1 : nrep, .combine = "rbind", .packages = "boot") %:%
+    foreach(j = 1 : nrow(all.comb), .combine = "c") %dopar%
+    {
+        logistic.regression.model <- 
+          glm(as.formula(paste("INFARCTS ~",
+                               paste(names(reduced.infarcts)[variable.indices[all.comb[j,] == 1]],
+                                     collapse = " + "))),
+              data = reduced.infarcts, family = "binomial")
+        return(cv.glm(reduced.infarcts, logistic.regression.model,
+                      cost = area.under.curve, K = 10)$delta[1])
+    }
+
+# Shut down cores.
+stopCluster(nclust)
+
+######################
+## Total error rate ##
+######################
+
+# View error rates according to model.
+boxplot(error.rate.parallel ~ matrix(rep(1 : nrow(all.comb), each = nrep),
+                                     nrow = nrep), xlab = "Model", ylab = "Error rate")
+
+# View all models within one SE of the best model.
+best.models.error.rate <- (1 : nrow(all.comb))[apply(error.rate.parallel,
+                                                     2, mean) <=
+                                                 min(apply(error.rate.parallel,
+                                                           2, mean) +
+                                                       apply(error.rate.parallel, 2, sd))]
+
+for(i in 1 : length(best.models.error.rate))
+{
+    cat(paste("Model ", i, ":\n"))
+    print(names(reduced.infarcts)[variable.indices[all.comb[best.models.error.rate[i],
+                                                            ] == 1]]) # Variable names
+    print(apply(error.rate.parallel, 2, mean)[best.models.error.rate[i]]) # Error rate
+
+    cat("\n")
+}
+
+##############################
+## Area under the ROC curve ##
+##############################
+
+# View AUC according to model.
+boxplot(AUC.parallel ~ matrix(rep(1 : nrow(all.comb), each = nrep), nrow = nrep),
+        xlab = "Model", ylab = "AUC")
+
+# View all models within one SE of the best model.
+best.models.AUC <- (1 : nrow(all.comb))[apply(AUC.parallel,
+                                              2, mean) >= max(apply(AUC.parallel,
+                                                                    2, mean) -
+                                                                apply(AUC.parallel, 2, sd))]
+
+for(i in 1 : length(best.models.AUC))
+{
+    cat(paste("Model ", i, ":\n"))
+    print(names(reduced.infarcts)[variable.indices[all.comb[best.models.AUC[i],
+                                                            ] == 1]]) # Variable names
+    print(apply(AUC.parallel, 2, mean)[best.models.AUC[i]]) # AUC
+    cat("\n")
+}
+```
+
+### 2.5 Shrinkage Methods for Logistic Regression
+
+  When dealing with a large number of variables, it can be computationally prohibitive to perform repeated 10-fold cross-validation (or even leave-one-out cross-validation) for candidate models consisting of all possible combinations of predictors. This is because the number of candidate models consisting of all possible combinations of k predictors is $2^k-1$, an exponential function of the number of predictors. For instance, it took more than 12 minutes to run 20 repetitions of 10-fold cross-validation on the 511 candidate models for code that was parallelised to run across 8 cores of a 2.6 GHz Intel Core i7 on a machine with 16 GB of 2400 MHz DDR4 RAM. Doubling the number of predictors from 9 to 18 would have resulted in more than 500 times more possible candidate models, resulting in a computing time that would have increased by a similar factor. With access to supercomputers/large servers, it is possible to assess the performance of a large number of candidate models by parallelising the process. In some instances, though, the computational burden, time constraints, and/or memory limitations may require the use of other methods to select a model. Methods like AIC and BIC are based on using the same data for both training and testing the model, so they do not directly assess predictive performance. However, they do penalise models based on number of predictors, so they generally help avoid selecting models that include too many predictors.
+  Alternatively, we can consider penalties in the same manner as for ridge regression and the LASSO. Doing so allows us to explore values for $\widehat\beta_1, \widehat\beta_2,...,\widehat\beta_k$ that are not allowed via the typical estimation process for logistic regression (which only considers unbiased estimators). In the case of ridge regression, estimates of coefficients for “unimportant” predictors will tend toward 0 but still be non-zero, whereas, the LASSO allows estimates of coefficients to go to 0, meaning that those variables can altogether be eliminated. Whether ridge regression should be considered will in large part depend on how difficult or expensive it is to collect all of the variables under consideration. For instance, if considering variables that are being automatically collected by machines, there may be minimal incentive to select a model that has as few predictors as possible, as the extra predictive power afforded by including more predictors comes at no extra cost. If, on the other hand, we are considering data such that variables have a real cost associated with them (e.g., medical diagnosis, physical measurement), then being able to eliminate variables from future consideration is important in reducing costs.
+
+**Example page 65 to 66**
+
+### 2.5.1 LASSO
+
+**Example continued 67 till 69**
+
+\newpage
+
+## 3 Other Classification Methods for Binary and Multinary Responses
+
+We previously considered how logistic regression can be used for prediction (as well as inference) for binary responses. We now examine several other methods for prediction for not only binary but also multinary responses. We specifically consider
+
+  * Linear discriminant analysis (LDA) and quadratic discriminant analysis (LDA) and
+  
+  * $k$ nearest neighbours (kNN)
+
+These methods assume that predictors $X_1, X_2,...,X_k$ are all numeric
+
+### 3.1 Discriminant Analysis
+
+Discriminant analysis provides an approach for classification that can be applied to any categorical response (or **grouping variable**) $Y$, where $Y$ can take on 2 or more distinct values (not restricted to binary). Its overarching goal is to maximise the degree of separation between classes (or categories) of $Y$ using numeric predictors $X_1, X_2,...,X_k$
+
+
+### 3.1.1 Logistic Regression vs. Discriminant Analysis
+
+For a binary response, logistic regression has similar objective to discriminant analysis, but the way in which it models $Y$ is quite different. In particular, for logistic regression and discriminant analysis the probability of "success" is modeled as follows:
+
+
+$$p=P\left(Y=1|X_1,X_2,...,X_k\right)=\frac{\textrm{exp}\left(\beta_0 + \beta_1 X_1 + \beta_2 X_2 + ... + \beta_k X_k \right)}{1 - \textrm{exp}\left(\beta_0 + \beta_1 X_1 + \beta_2 X_2 + ... + \beta_k X_k \right)}$$ \hfill (Logistic Regression)
+
+$$p=P\left(Y=1|X_1,X_2,...,X_k\right)=\frac{P\left(X_1,X_2,...,X_k|Y=1 \right)P\left(Y=1 \right)}{P\left(X_1,X_2,...,X_k|Y=0 \right)P\left(Y=0 \right)+P\left(X_1,X_2,...,X_k|Y=1 \right)P\left(Y=1 \right)}$$ \hfill (Discriminant Analysis)
+
+In the case of discriminant analysis, the formulation of $P\left(Y=1|X_1,X_2,...,X_k \right)$ us a direct application of **Bayes' rule**, where
+
+  * $P(Y=0)$ and $P(Y = 1)$ denote the prior probabilities of Y taking on values of 0 and 1, respectively.
+    
+    * In most cases, these prior probabilities can be considered to be the relative representation of outcomes of $Y = 0$ and $Y = 1$ in the population of interest. For instance, if the percentage of people with a particular disease is $5\%$ and the outcome of interest $Y$ denotes incidence of that disease, then we might specify $P (Y = 0) = 0.95$ and $P (Y = 1) = 0.05$.
+    
+    * Where these prior probabilities are unknown, the observed proportions of $Y = 0$ and $Y = 1$ from the sample data are commonly specified as $P (Y = 0)$ and $P (Y = 1)$, as this minimises the classification error rate.
+
+When $Y$ is multinary with $G$ classes, then the probability for class $g$ is given by
+
+$$p=P\left(Y=g|X_1,X_2,...,X_k\right)=\frac{P\left(X_1,X_2,...,X_k|Y=g \right)P\left(Y=g \right)}{\sum^g_{l=1} P\left(X_1,X_2,...,X_k|Y=l \right)P\left(Y=l \right)},g \in \{1,2,...,G\}$$
+
+\newpage
+Some of the key distinction between logistic regression and discriminant analysis is as follows:
+
+Logistic Regression  | Discriminant Analysis
+------------- | -------------
+Models the response $Y$ directly in terms of the predictors  | Content Cell
+Content Cell  | Content Cell
+
+\begin{center}
+Table from page 71 of Ryan Admiraal's notes
+\end{center}
+
+\newpage
+
+In general, logistic regression is preferable to linear discriminant analysis (LDA) and quadratic discriminant analysis (QDA) for prediction of a binary response, although there are several instances where LDA and QDA would be expected to outperform logistic regression. In particular,
+
+  * if the predictors X1, X2, ..., Xk are effective in producing a strong separation of classes for Y or
+
+  * if the joint distribution of the predictors $X_1 , X_2 ,..., X_k$ is approximately multivariate normal for each
+  of the unique values of Y and the sample size is relatively small,
+
+then LDA and QDA will be preferable, as parameter estimates for logistic regression can be “unstable” in such situations ($i.e.$, the standard errors corresponding to parameter estimates are drastically inflated).
+
+To illustrate this instability in parameter estimates for logistic regression models, recall the previous toy example of individuals who were asked whether they were concerned about climate change. We had an almost perfect separation between those who were $(Y = 1)$ and were not $(Y = 0)$ concerned about climate change based on age of the individual. Suppose that we did in fact have perfect separation of these two classes based on age, as shown in the scatterplot below. (This means that we should be able to find a cutpoint for age for which all ages below that cutpoint have one value for $Y$ and all ages above that cut point have another value for $Y$ .)
+
+\begin{center}
+The graph is from page 71 of the notes
+\end{center}
+
+
+### 3.1.2 Linear Discriminant Analysis and Quadratic Discriminant Analysis (Page 72)
+
+Although linear discriminant analysis and quadratic discriminant analysis allow for $Y$ to be multinary, we will discuss these methods initially in the case where $Y$ is binary before extending to the case where $Y$ is multinary. Both LDA and QDA make several assumptions.
+
+
+### 3.1.2.1 Assumptions
+
+  * **Independence**: Observations are independent in terms of their multivariate outcomes ($X_1,X_2,...,X_k,Y$)
+  
+  * **Multivariate normality**: The predictors $X_1,X_2,...,X_k,Y$ follow a multivariate normal distribution for each class of $Y$ ($i.e.$, the joint distribution $P(X_1,X_2,...,X_k|Y=g)$ is a multivariate normal distribution for each class $g$)
+    * To access the assumptions of multivariate normality of the predictors, we use the quantile`-`quantile (Q`-`Q) plot of Mahalanobis distances of points to their centroids for each group or class of the response(`i.e.`, In tutorial 12 example, each of the three wine cultivars in this case.)
+  
+  * **Equality of variances/covariates**: The variances (the measure of spread) of predictors and covariances between predictors are the same for each class of the response $Y$. This is equivalent to saying that the **covariance matrices** are the same for each class of $Y$. (only relevant to linear discriminant analysis, not quadratic discriminant analysis, where each class $g$ of $Y$ can have a different covariance matrix for ($X_1,X_2,...,X_k$))
+
+This assumption means that the general shape/scatter and direction of points in terms of $X_1, X_2, ..., X_k$ is roughly the same for each class of $Y$ . If we only have two numeric predictors $X_1$ and $X_2$, then data that would be roughly consistent with this assumption may be as shown in the figure on **page 73 to 75 of the course notes**, where black denotes observations with $Y = 0$ and red denotes observations with $Y=1$. If we look at the univariate distribution for $X_1$ for each class of $Y$, we notice that the distribution for each class of $Y$ is approximately normal with similar spread for each class of Y . The same is true when observing the univariate distribution for $X_2$ for each class of $Y$. These indicate equality of variances for the predictors for each class of $Y$. Equality of covariances would lead to a multivariate distribution where point clouds for each class of $Y$ have similar general shapes and are pointed in the same direction. We observe that in the figure below, where the elliptical shapes created by the $(X_1,X_2)$ pairs corresponding to the two classes of $Y$ are similar in shape and have a similar positive trajectory.
+
+The fact that univariate distributions for $X_1$ and $X_2$ are approximately normal for each class of Y is consistent with the distribution of $X_1,X_2|Y$ being multivariate normal (or bivariate normal in this case, since there are only two predictors).
+
+
+  * If $Y$ is binary, each group follows a multivariate normal distribution for the predictors $X_1,X_2,..., X_k$, and the variance of and covariance between predictors $X_1,X_2,...,X_k$ is the same for each class of $Y$, then a single line is sufficient to provide the best split possible between the two classes for $Y$. This optimal split will occur halfway between the means of the point clouds (or centroids) for the two classes of $Y$.
+
+**See Tutorial 12 for more understanding**
+
+### 3.1.2.2 Modeling $X_1,X_2,...,X_k$ in terms of $Y$
+
+  Linear discriminant analysis (LDA) uses a linear combination of the predictors $X_1,X_2,...,X_k$ to produce separation between the $g$ classes of $Y$. It does this through up to $m=min\{k,g-1\}$ **Discriminant functions**
+  
+  These discriminant functions separate the k-dimensional space of the predictors $X_1, X_2, . . . , X_k$ into distinct regions with linear decision boundaries. Each region corresponds to a particular classification of the response variable $Y$ . It does this by projecting the k dimensional data contained in the predictors into 1 dimensional space for each discriminant function. The first discriminant function (LD1) provides the greatest separation between classes of the grouping variable, and this decreases for each successive discriminant function. (The details of exactly how LDA produces each of these $m$ projections from k dimensional space into 1 dimensional space is beyond the scope of DATA303/DATA473.)
+
+  To better understand how LDA works, consider the scatter plot at page 77 to 80 of the notes, which shows the paired values of the continuous predictors $X_1$ and $X_2$ for a binary response $Y$ (black = 0, red = 1). Density plots of the values of $X_1$ for the two groups of $Y$ (top left) and the values of X2 for the two groups of $Y$ (bottom right) show significant overlap, indicating that neither $X_1$ nor $X_2$ on their own can be used to effectively separate the two groups of $Y$ . However, it should be apparent from the scatter plot that there is a clear separation between the two groups for $Y$ in terms of their paired (X1,X2) values with a line being able to split the scatterplot into two regions with all observations corresponding to $Y$ = 0 (black) below the line and all observations corresponding to $Y$ = 1 (red) above the line.
+
+#Summary from week 12 Slides
+
+  * Linear discriminant analysis uses up to $m=min\{k,g-1\}$ **Linear discriminant functions** of the predictors $X_1, X_2, . . . , X_k$ to produce separation between the $g$ classes of $Y$:
+  
+$$\textrm{LD}=c_{11}X_1 + c_{12}X_2 + \dots + c_{1k}X_k$$
+$$\textrm{LD}=c_{21}X_1 + c_{22}X_2 + \dots + c_{2k}X_k$$
+$$\vdots$$
+$$\textrm{LD}=c_{m1}X_1 + c_{m2}X_2 + \dots + c_{mk}X_k$$
+
+  * The first discriminant analysis is providing the greatest separation between classes of the grouping variable, and this decreases for each successive discriminant function.
+  * these discriminant functions separate the `k` dimensional space of the predictors $X_1, X_2, . . . , X_k$ into distinct regions with **Linear decision boundaries**
+
+
+
+
+
+### 3.2 K Nearest Neighbours
+
+Now turn out attention to non parametric methods for classification. Both logistic regression and LDA/QDA are parametric methods in that they make an assumption about the probability distribution of the response (e.g., binomial) or predictors (e.g., multivariate normal) and use this in modelling $P (Y = g|X_1, X_2, . . . , X_k)$. Non-parametric methods make no such distributional assumptions. This can lead to significantly better predictive performance when the assumptions underlying logistic regression or LDA/QDA are clearly violated.
+
+We specifically consider k-nearest neighbours (k-NN), which can be used for classifying a binary or multinary response Y . It does this by finding the k “nearest” points to a given observation in terms of continuous predictors $X_1, X_2, ..., X_l$ and classifying an observation based on the classes of those k nearest points. The “nearest” points are found using some distance measure. We will strictly consider **Euclidean distance**, given by
+
+$$d\left( \left( x^{(1)}_1,x^{(1)}_2,...,x^{(1)}_l \right),\left( x^{(2)}_1,x^{(2)}_2,...,x^{(2)}_l \right)\right)=\sqrt{\left(x^{(1)}_1-x^{(2)}_1 \right)^2 + \left(x^{(1)}_2-x^{(2)}_2 \right)^2+...+\left(x^{(1)}_l-x^{(2)}_l \right)^2}$$
+but there are other distance measures that may be more appropriate in different contexts
+
+### Standardisation
+
+If predictors are measured on different scales, then variables that are measured on larger scales will dominate the Euclidean distance. For example, suppose we have predictors $X_1$ and $X_2$ and want to measure the distance between the points $(1, 2)$ and $(2, 3)$. Then
+
+$$d\left(\left(1,3 \right),\left(2,4 \right) \right)=\sqrt{(2-1)^2+(4-3)^2}=\sqrt{2}\approx 1.414$$
+
+This distance equally accounts for the distance between the values of $X_1$ and $X_2$. Now suppose that $X_2$ is measured on a scale that is 10 times larger ($e.g.$, measuring length in centimetres rather than metres), so the two points are $(1, 20)$ and $(2, 30)$. In this case
+
+$$d\left(\left(1,30 \right),\left(2,40 \right) \right)=\sqrt{(2-1)^2+(40-30)^2}=\sqrt{101}\approx 10.05$$
+
+Here, this distance is dominated by $X_2$ simply due to it being on a much larger scale, and we would then expect that nearest neighbours would be determined almost completely by observations which are close in terms of value of $X_2$. To ensure that each predictor is given equal influence in terms of determining nearest neighbours, we commonly standardize predictors ($i.e.$, transform values for each predictor so that the mean is 0 and standard deviation is 1).
+
+To better understand $k\textrm{-NN}$, suppose that Y has three classes, and there are two continuous predictors $X_1$ and $X_2$, as shown in the scatterplot in page 96 onwards. Further suppose that we have a new observation where the values for $X_1$ and $X_2$ are known but $Y$ is not, as indicated by the circled $\triangle$ in the scatterplot.
+
+### 3.2.1 Example: Tumour Image and Breat Cancer Diagnosis (Page 99 onward)
+
+\newpage
+\begin{center}
+Summary written here is from Assignment 4 solutions
+
+Lecturer: Ryan Admiraal
+\end{center}
+
+### 3. Statistical Learning
+
+### 3.a Backward and forward selection using algorithms
+
+  We now perform forward and backward selection. With forward selection, we start with an empty model and sequentially add predictors that lead to the most significant improvement in fit until no predictors can be added that lead to a better model fit. The steps that were taken by the forward selection algorithm are as shown in the table below, leading to all nine predictors being included in the final model.
+  
+  Backward selection starts with a full model and sequentially removes predictors that produce likelihood ratio tests with the highest (non-statistically significant) p-values until no more predictors can be removed. The steps that were taken by the backward selection algorithm are as shown in the table below, leading to no predictors being excluded (i.e., all nine predictors are included in the final model).
+  
+  The table output will provide a comparison of the predictors that are included in the “best” models selected by forward selection and backward selection algorithms. We know that it is possible for forward and backward selection algorithms to arrive at different final models, as stepwise selection algorithms are “greedy” algorithms which simply take the optimal choice at each step, rather than exploring all possible subsets of predictors. In this case, however, forward and backward selection algorithms select the same set of predictors, namely every predictor considered.
+
+### 3.b AIC and BIC optimal models selection criteria
+
+### 3.c For this set of predictors, use 20 repetitions of 10-fold cross-validation to identify the optimal model(s) identified according to the criteria of
+### i. minimising total error rate and
+### ii. maximising AUC.
+
+Code for calculating total error rates and AUC for 20 repetitions of 10-fold cross-validation for these models is as shown below. Boxplots are produced to visualise the total error rates and AUC for these repetitions of 10-fold cross-validation across the models, and the predictors contained in models that are within one standard error of the “best” model in terms of minimising total error rate or maximising AUC are also presented. Of the models within one standard error of the minimum total error rate, the one that will have the lowest mean error rate or maximum mean AUC can quite easily change if the cross-validation routine is re-run, although the optimal models will generally be the same. (This is because the foreach function does not have a simple mechanism to allow a seed to be set across multiple processors.) Consequently, the optimal model reported in the text may not necessarily match the R code output below (nor will it necessarily match your output either). For both criteria of minimising total error rate and maximising AUC,
+
+
