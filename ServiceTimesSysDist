@@ -16,6 +16,7 @@ plt.xlabel("Frequency")
 plt.ylabel("Time in Seconds")
 plt.show()
 
+# distribution names to be edited based on the ChiSq results
 dist_names = ['erlang', 'gamma', 'expon', 'norm']
 chi_square_statistics = []
 
