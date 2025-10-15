@@ -93,3 +93,4 @@ These represent the fitted parameters for each candidate distribution.
 
 **Triston Aloyssius Marta**  
 📧 tristonmarta@yahoo.com.sg
+Data Analysis
