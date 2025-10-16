@@ -89,8 +89,7 @@ These represent the fitted parameters for each candidate distribution.
 
 ---
 
-## 🧑‍💻 Author
-
-**Triston Aloyssius Marta**  
+👤 Author
+Developed by: Triston Aloyssius Marta
 📧 tristonmarta@yahoo.com.sg
-Data Analysis
+💼 Data Science and Statistics
